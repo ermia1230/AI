@@ -6,17 +6,15 @@ client = OpenAI(
     api_key="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"
 )
 
-# Connect to PostgreSQL
 connection = psycopg2.connect(
     host="localhost",
     port="5433",
     database="AI",
     user="postgres",
-    password="6175144er"
+    password="xxx"
 )
 cursor = connection.cursor()
 
-# Fetch data
 fetch_query = """
 WITH FilteredClothing AS (
     SELECT clothing_id
@@ -49,7 +47,7 @@ CREATE TABLE IF NOT EXISTS validated_reviews_pants (
 cursor.execute(create_table_query)
 
 with open('validated_reviews_pants.csv', mode='w', newline='', encoding='utf-8') as file:
-    csv_writer = csv.writer(file)
+    csv_writer = csv.writer(file, delimiter=',')
     csv_writer.writerow(["clothing_id", "review", "rating", "recommend", "validation_result", "problem_category"])
 
     for row in rows:
@@ -82,8 +80,8 @@ with open('validated_reviews_pants.csv', mode='w', newline='', encoding='utf-8')
             validation_result = chat_completion.choices[0].message.content.strip()
             try:
                 validation, problem_category = validation_result.split(", ")
-                validation = validation == "True"  # Convert string to boolean
-                problem_category = int(problem_category)  # Convert to integer
+                validation = validation == "True"
+                problem_category = int(problem_category) 
             except ValueError:
                 print(f"Unexpected GPT response format: {validation_result}")
                 continue

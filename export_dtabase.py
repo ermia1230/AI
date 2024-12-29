@@ -4,7 +4,7 @@ host = "localhost"
 port = "5433"
 database = "AI"
 user = "postgres"
-password = "6175144er"
+password = "xxxx"
 output_file = "AI_backup.sql"
 
 command = [
