@@ -1,0 +1,51 @@
+-----------------------------------------------------------------------
+REQUIREMENTS:
+ - Python: 3.11.9
+ - PostgreSQL: 16.1
+ - pip: 23.1.1
+
+Install the following packages:
+ - psycopg2
+ - pandas
+ - matplotlib
+ - python-dotenv
+ - openai
+-----------------------------------------------------------------------
+
+NOTE: step 1 and 2 are optional, if you want to do them, you need to 
+have an OpenAI API key.
+
+STEP 1: Create a database in PostgreSQL with the schema specified in 
+./initial_phase/create_table.sql. It is important to know the username,
+password and port you are using to connect. After that, create 
+a file int this directory and name it local.env and add the following 
+information:
+
+
+DB_HOST=yourDatabaseHost
+DB_PORT=yourDatabasePort
+DB_DATABASE=yourDatabaseName
+DB_USER=yourDatabaseUsername
+DB_PASSWORD=yourDatabasePassword
+OPENAI_API_KEY=yourOpenAIKey
+
+Once you have done that, you can run the script in 
+./intial_phase/data.py to populate the database with the data
+from the csv files in ./initial_phase/data.
+
+STEP 2: Run each script in ./nlp folder to generate the data for the 
+NLP model. Once you have done that, you are ready to run the jupyter 
+notebook named ProductionReviewAnalysis to see the results.
+
+STEP 3: Run the ProductionReviewAnalysis.ipynb file to see the 
+results of the analysis.
+
+-----------------------------------------------------------------------
+
+OBS: If you want to skip step 1 and 2, you can use the 
+processed_data.sql file which is a dump of the database after running
+the scripts in ./initial_phase and ./nlp_phase folders. You can import 
+this file to your database and run the ProductionReviewAnalysis.ipynb 
+file to see the results of the analysis.Remember to create the
+local.env file with the required information to connect to the 
+database - you don't need the OPENAI_API_KEY in this case.

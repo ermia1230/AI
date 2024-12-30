@@ -1,17 +1,20 @@
 import psycopg2
 from openai import OpenAI
 import csv
+from dotenv import load_dotenv
+import os
 
+load_dotenv('../local.env')
 client = OpenAI(
-    api_key="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"
+    api_key=os.getenv("OPENAI_API_KEY")
 )
 
 connection = psycopg2.connect(
-    host="localhost",
-    port="5433",
-    database="AI",
-    user="postgres",
-    password="xxx"
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT"),
+    database=os.getenv("DB_DATABASE"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD")
 )
 cursor = connection.cursor()
 
@@ -19,7 +22,7 @@ fetch_query = """
 WITH FilteredClothing AS (
     SELECT clothing_id
     FROM raw_data
-    WHERE class_name = 'Pants'
+    WHERE class_name = 'Jeans'
     GROUP BY clothing_id
     HAVING COUNT(review_id) >= 50
 )
@@ -33,7 +36,7 @@ cursor.execute(fetch_query)
 rows = cursor.fetchall()
 
 create_table_query = """
-CREATE TABLE IF NOT EXISTS validated_reviews_pants (
+CREATE TABLE IF NOT EXISTS validated_reviews_jeans (
     id SERIAL PRIMARY KEY,
     clothing_id INTEGER,
     review_id INTEGER,
@@ -46,7 +49,7 @@ CREATE TABLE IF NOT EXISTS validated_reviews_pants (
 """
 cursor.execute(create_table_query)
 
-with open('validated_reviews_pants.csv', mode='w', newline='', encoding='utf-8') as file:
+with open('validated_reviews_jeans.csv', mode='w', newline='', encoding='utf-8') as file:
     csv_writer = csv.writer(file, delimiter=',')
     csv_writer.writerow(["clothing_id", "review", "rating", "recommend", "validation_result", "problem_category"])
 
@@ -86,7 +89,7 @@ with open('validated_reviews_pants.csv', mode='w', newline='', encoding='utf-8')
                 print(f"Unexpected GPT response format: {validation_result}")
                 continue
             insert_query = """
-            INSERT INTO validated_reviews_pants ( clothing_id ,review_id, review, rating, recommend, validation_result, problem_category)
+            INSERT INTO validated_reviews_jeans ( clothing_id ,review_id, review, rating, recommend, validation_result, problem_category)
             VALUES (%s, %s, %s, %s, %s, %s, %s);
             """
             cursor.execute(insert_query, (clothing_id, review_id, review, rating, recommend, validation, problem_category))
