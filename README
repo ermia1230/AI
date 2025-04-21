@@ -2,52 +2,36 @@ DEVELOPED BY: Ermia Ghaffari & Daniel Ibrahimi
 Course Code: ID1204
 -----------------------------------------------------------------------
 REQUIREMENTS:
- - Python: 3.11.9
- - PostgreSQL: 16.1
- - pip: 23.1.1
+- Docker
 
-Install the following packages:
- - psycopg2
- - pandas
- - matplotlib
- - python-dotenv
- - openai
------------------------------------------------------------------------
+ NOTE: if you want to add a dump file of the database after you run the 
+ nlp-service - to reduce the api cost, remember to name it 
+ "processed_data.sql" and add it in the ./nlp_api_service folder
+=======================================================================
 
-NOTE: step 1 and 2 are optional, if you want to do them, you need to 
-have an OpenAI API key.
+DETAILS:
 
-STEP 1: Create a database in PostgreSQL with the schema specified in 
-./initial_phase/create_table.sql. It is important to know the username,
-password and port you are using to connect. After that, create 
-a file int this directory and name it local.env and add the following 
-information:
+STEP 0: // make sure you have docker installed
+docker-compose up --build
 
+After docker-compose up --build you should run the follwoing commands:
 
-DB_HOST=yourDatabaseHost
-DB_PORT=yourDatabasePort
-DB_DATABASE=yourDatabaseName
-DB_USER=yourDatabaseUsername
-DB_PASSWORD=yourDatabasePassword
-OPENAI_API_KEY=yourOpenAIKey
+STEP I: // make sure you run it in the current directory
+brew install pyenv jupyterlab
+pyenv install 3.12.5
+pyenv local 3.12.5
+rm -rf .venv 
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install ipykernel pandas psycopg2 matplotlib python-dotenv 
+python -m ipykernel install --user --name=.venv --display-name "Python (.ai_project_test)"
+jupyter lab
 
-Once you have done that, you can run the script in 
-./intial_phase/data.py to populate the database with the data
-from the csv files in ./initial_phase/data.
+STEP II: // change kernel in jupyter lab and execute the code
 
-STEP 2: Run each script in ./nlp folder to generate the data for the 
-NLP model. Once you have done that, you are ready to run the jupyter 
-notebook named ProductionReviewAnalysis to see the results.
+STEP III: // deactivate still in (.venv) 
+deactivate
 
-STEP 3: Run the ProductionReviewAnalysis.ipynb file to see the 
-results of the analysis.
-
------------------------------------------------------------------------
-
-OBS: If you want to skip step 1 and 2, you can use the 
-processed_data.sql file which is a dump of the database after running
-the scripts in ./initial_phase and ./nlp_phase folders. You can import 
-this file to your database and run the ProductionReviewAnalysis.ipynb 
-file to see the results of the analysis.Remember to create the
-local.env file with the required information to connect to the 
-database - you don't need the OPENAI_API_KEY in this case.
+STEP IV: // remove docker containers
+docker-compose down
